@@ -36,7 +36,7 @@ Selecting a specific item shows you specific information about that item.
 After logging in, a user has the ability to add, update, or delete item information. Users should be able to modify only those items that they themselves have created.
 ![Logged In Homepage](./readme_images/logged_in_homepage.png)
 
-![Logged In Snowboard](./readme_images/logged_in_snowboard.png)
+![Logged In Snowboard](./readme_images/logged_in_snowboard.png) <br>
 Note that the link is ‘http://localhost:8000/catalog/Snowboarding/Snowboard’. This is to ensure ease of readability.
 
 ![Logged In Edit](./readme_images/logged_in_edit.png)
@@ -53,11 +53,11 @@ The application should provide a JSON endpoint at the very least.
 Before we begin coding, there are several steps that you should take to make sure that you have everything downloaded in order to run your future web application.
 
 
-- Install Vagrant and VirtualBox if you have not done so already. Instructions on how to do so can be found on the websites as well as in the course materials..
+- Install [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) if you have not done so already. 
 - Clone this repository. There is a catalog folder provided for you, but no files have been included. If a catalog folder does not exist, simply create your own inside of the vagrant folder.
 Launch the Vagrant VM (by typing `vagrant up` in the directory fullstack/vagrant from the terminal).
 - Write the Flask application locally in the /vagrant/catalog directory (which will automatically be synced to /vagrant/catalog within the VM). Name it application.py.
-- Run your application within the VM by typing python /vagrant/catalog/application.py into the Terminal. If you named the file from step 4 as something other than application.py, in the above command substitute in the file name on your computer.
+- Run your application within the VM by typing `python /vagrant/catalog/application.py` into the Terminal. If you named the file from step 4 as something other than application.py, in the above command substitute in the file name on your computer.
 - Access and test your application by visiting http://localhost:8000 locally on your browser.
 
 Now that we’ve set up the directories and downloaded the software, some of you may be wondering, what do I do now? Do I start with the front end? Do I start with application.py? Do I make my database? Now might be a good time to revisit Lesson 4 of Full Stack Foundations, these issues are covered.
@@ -75,7 +75,7 @@ the database (to store and organize the information)
 
 As long as you hit these four parts, it doesn’t matter where you begin, whether you begin with the HTML/CSS or Flask and the database. If you’re looking for a little bit more guidance, this is what Lorenzo, the Full Stack Foundations instructor had to say:
 
-        “Personally, I usually start with the database layout so that the database is modelling the information the way I want. Then I go ahead and add the backend, the Flask code, the Python code, and then I move on to the frontend where I then receive feedback on the frontend where I use the feedback to make it more stylish and elegant and presentable with everything else already in place. This is just me though, it varies from developer to developer.”
+>Personally, I usually start with the database layout so that the database is modelling the information the way I want. Then I go ahead and add the backend, the Flask code, the Python code, and then I move on to the frontend where I then receive feedback on the frontend where I use the feedback to make it more stylish and elegant and presentable with everything else already in place. This is just me though, it varies from developer to developer.
 
 
 # To Submit
