@@ -12,42 +12,37 @@ Note: The screenshots on this page are just examples of one implementation of th
 
 
 In this sample project, the homepage displays all current categories with the latest added items.
-
+![Homepage Image](./readme_images/homepage.png)
         
 
 
 
 
 Selecting a specific category shows you all the items available for that category.
+![Snowboarding Catalog Image](./readme_images/snowboarding.png)
 
 
 
 
 Selecting a specific item shows you specific information about that item.
+![Snowboard Catalog Image](./readme_images/snowboard.png)
 
 
 
 
 
 After logging in, a user has the ability to add, update, or delete item information. Users should be able to modify only those items that they themselves have created.
+![Logged In Homepage](./readme_images/logged_in_homepage.png)
 
-
-
-
-
-
-
+![Logged In Snowboard](./readme_images/logged_in_snowboard.png)
 Note that the link is ‘http://localhost:8000/catalog/Snowboarding/Snowboard’. This is to ensure ease of readability.
 
+![Logged In Edit](./readme_images/logged_in_edit.png)
 
-
-
-
-
-
+![Logged In Delete](./readme_images/logged_in_delete.png)
 
 The application should provide a JSON endpoint at the very least.
-
+![JSON Endpoint Image](./readme_images/json.png)
 
 
 
