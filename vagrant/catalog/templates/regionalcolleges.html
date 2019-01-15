@@ -1,3 +1,22 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+</head>
+<body>
   <a href='{{url_for('showRegions', region=region)}}'>Back</a>
+
+  <h1>Organize 4 College</h1>
+  <h2>Viewing Colleges in the Region of {{region}}</h2>
   <a href='{{url_for('addNewCollege', region=region)}}'>Add College to this region</a>
+  </br>
+  {% for item in colleges %}
+  {% if region == item.region %}
+  <div>
     <a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>{{item.name}}</a></br>
+  </div>
+  {% endif %}
+  {% endfor %}
+</body>
+
+</html>

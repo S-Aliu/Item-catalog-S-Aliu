@@ -1,4 +1,12 @@
-  <a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>Cancel</a>
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+</head>
+<body>
+  <h1>Organize 4 College</h1>
+  <h2>Edit {{item.name}} </h2>
+
   <form action="#" method = 'POST'>
 
   <p>Name:</p>
@@ -28,3 +36,6 @@
 
   </form>
 
+</body>
+
+</html>

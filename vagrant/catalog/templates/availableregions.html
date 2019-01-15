@@ -1,1 +1,17 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+</head>
+<body>
+  <h1>Organize 4 College</h1>
+  <h2>Begin Viewing Colleges by Region:</h2>
+  {% for region in regions %}
+  <div>
     <a href='{{url_for('showRegionColleges', region=region)}}'>{{region}}</a>
+    </br>
+  </div>
+  {% endfor %}
+</body>
+
+</html>

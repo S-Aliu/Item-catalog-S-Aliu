@@ -1,4 +1,12 @@
-  <a href='{{url_for('showRegionColleges', region=region)}}'>Cancel</a>
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+</head>
+<body>
+  <h1>Organize 4 College</h1>
+  <h2>Add A New College in the Region of {{region}}</h2>
+
   <form action="#" method = 'POST'>
 
   <p>Name:</p>
@@ -23,3 +31,6 @@
   <input type='submit' value='Create'><span> | </span><a href='{{url_for('showRegionColleges', region=region)}}'>Cancel</a>
 
   </form>
+</body>
+
+</html>

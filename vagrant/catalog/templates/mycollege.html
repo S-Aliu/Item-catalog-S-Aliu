@@ -1,0 +1,19 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+</head>
+<body>
+  <a href='{{url_for('showRegionColleges', colleges=colleges, region=region)}}'>Back</a>
+  <h1>Organize 4 College</h1>
+  <h2>{{college.name}}</h2>
+
+  <div>
+    <img src="{{url_for('static',filename='williams_college.jpg')}}" alt="college pic" height="170px">
+    <p> Address: {{college.location}}</br>Phone Number: {{college.phone_number}}</br>This is a {{college.college_type}}</br>Notes: {{college.notes}}</p>
+    <p><a href='{{url_for('editMyCollege', region=college.region, college_id=college.college_id)}}'>Edit</a> | <a href='{{url_for('deleteMyCollege', region=college.region, college_id=college.college_id)}}'>Delete</a></p>
+  </div>
+
+</body>
+
+</html>
