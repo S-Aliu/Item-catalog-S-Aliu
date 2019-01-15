@@ -26,6 +26,7 @@ def showRegionColleges(region):
 # create new college in same region by clicking link on page that shows all colleges for region
 @app.route('/region/<region>/new/')
 def addNewCollege(region):
+    # make sure that when adding item that region incorperated
     return render_template('addregionalcollege.html', region=region, colleges=colleges)
 
 # show college by clicking link on page that shows all colleges for region
@@ -35,7 +36,7 @@ def showMyCollege(region, college_id):
     return render_template('mycollege.html', college=williams, colleges=colleges, region=region)
 
 # may go to another page to edit any of college info provided
-@app.route('/region/<region>/<int:college_id>/edit')
+@app.route('/region/<region>/<int:college_id>/edit', methods=['GET','POST'])
 def editMyCollege(region, college_id):
     return render_template('editregionalcollege.html',region=region,college_id=college_id, item=williams)
 

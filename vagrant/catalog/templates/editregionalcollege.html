@@ -1,1 +1,30 @@
   <a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>Cancel</a>
+  <form action="#" method = 'POST'>
+
+  <p>Name:</p>
+  <input type='text' size='55' name='college_name' placeholder='{{item.name}}'></br>
+  <p>Region:</p>
+  <input type='text' size='55' name='region' placeholder='{{item.region}}'>
+</br>
+  <p>Location:</p>
+  <input type='text' size='55' name='location' placeholder='{{item.location}}'>
+</br>
+<p>Phone Number:</p>
+<input type='text' size='55' name='phone_number' placeholder='{{item.phone_number}}'>
+</br>
+<p>Type of College:</p>
+<input type='text' size='55' name='college_type' placeholder='{{item.college_type}}'>
+</br>
+<p>Your Notes:</p>
+<!-- <input type='text' size='300' name='client_notes' placeholder='{{item.notes}}'> -->
+<textarea name='client_notes' cols="90" rows="10"  placeholder='{{item.notes}}'></textarea>
+</br>
+<input type="reset" value='Reset All'>
+</br>
+</br>
+</br>
+</br>
+  <input type='submit' value='Edit'><span> | </span><a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>Cancel</a>
+
+  </form>
+
