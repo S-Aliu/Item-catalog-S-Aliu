@@ -7,7 +7,7 @@
   <h1>Organize 4 College</h1>
   <h2>Add A New College in the Region of {{region}}</h2>
 
-  <form action="#" method = 'POST'>
+  <form action="{{url_for('addNewCollege', region=region )}}" method = 'POST'>
 
   <p>Name:</p>
   <input type='text' size='55' name='college_name' required='required'></br>
