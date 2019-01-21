@@ -88,16 +88,16 @@ def editMyCollege(region, college_id):
         return render_template('editregionalcollege.html',region=region, college_id=college_id, item=editedItem)
 
 # this page allows user to delete colleges
-@app.route('/region/<region>/<int:college_id>/delete/')
+@app.route('/region/<region>/<int:college_id>/delete/', methods=['GET','POST'])
 def deleteMyCollege(region, college_id):
     itemToDelete = session.query(College).filter_by(college_id=college_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
-        return redirect(url_for('showMyCollege', region=region, college_id=college_id))
+        return redirect(url_for('showRegionColleges', region=region))
     else:
-        # if get request
-        return render_template('deletemycollege.html',region=region,college_id=college_id, item=itemToDelete)
+        # if get request (including going to the website)
+        return render_template('deletemycollege.html', region=region, item=itemToDelete)
 
 
 if __name__ == '__main__':
