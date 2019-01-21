@@ -7,10 +7,16 @@
   <h1>Organize 4 College</h1>
   <h2>Add A New College in the Region of {{region}}</h2>
 
-  <form action="{{url_for('addNewCollege', region=region )}}" method = 'POST'>
+  <form action="{{url_for('addNewCollege', region=region )}}" method = 'POST'  enctype="multipart/form-data">
 
   <p>Name:</p>
   <input type='text' size='55' name='college_name' required='required'></br>
+
+
+  <p>Upload an Image:</p>
+  <input type="file" name="image">
+
+
   <p>Location:</p>
   <input type='text' size='55' name='location'>
   </br>
