@@ -1,9 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+import os
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app
 app = Flask(__name__)
+# downloaded pictures go to static folder
+UPLOAD_FOLDER = os.path.basename('static')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 from database_setup import College, Region, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 
 # Create session and connect to DB ##
 engine = create_engine('sqlite:///colleges.db?check_same_thread=False')
@@ -29,13 +35,18 @@ def showRegionColleges(region):
 
 # create new college in same region by clicking link on page that shows all colleges for region
 @app.route('/region/<region>/new/', methods=['GET','POST'])
+# region is a string not an object!
 def addNewCollege(region):
     if request.method == 'POST':
-        newCollege = College(name = request.form['college_name'], college_region=region, location = request.form['location'], phone_number = request.form['phone_number'], college_type = request.form['college_type'], notes = request.form['client_notes'])
+        file = request.files['image']
+        f= os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(f)
+        file_n = file.filename
+        this_region = session.query(Region).filter_by(name=region).one()
+        newCollege = College(name = request.form['college_name'], college_region=this_region, location = request.form['location'], phone_number = request.form['phone_number'], college_type = request.form['college_type'], notes = request.form['client_notes'], image_filename=file_n)
         session.add(newCollege)
         session.commit()
-        # return render_template('regionalcolleges.html', colleges=colleges, region=region)
-        redirect(url_for('showRegionColleges',region=region))
+        return redirect(url_for('showRegionColleges', region=region))
     else:
         return render_template('addregionalcollege.html', region=region)
 

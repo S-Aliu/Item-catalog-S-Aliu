@@ -1,12 +1,15 @@
 import sys
 # helpful for mapper code
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, LargeBinary
+# blob
+from sqlalchemy.dialects.sqlite import BLOB
 #will use in configuration and class code
 from sqlalchemy.ext.declarative import declarative_base
 # to create foreign key relationship to be used w/ mapper
 from sqlalchemy.orm import relationship
 #will use in configuration code at the end
 from sqlalchemy import create_engine
+
 
 # creates instance of imported class called base letting SQL know that our classes are special classes that correspond to tables in our database
 Base = declarative_base()
@@ -28,6 +31,8 @@ class College(Base):
     college_id = Column(Integer, primary_key = True)
     # picture of college
     image_filename = Column(String(100))
+    # uploaded picture/data
+    image_filename2 = Column(BLOB)
     # location
     location = Column(String(200))
     # phone number
