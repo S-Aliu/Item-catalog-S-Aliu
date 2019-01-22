@@ -7,19 +7,19 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 # West Region
-West = Region(name = "West")
+West = Region(name = "West", image_region = "west.jpg")
 session.add(West)
 session.commit()
 # Midwest Region
-Midwest = Region(name = "Midwest")
+Midwest = Region(name = "Midwest", image_region = "midwest.jpg")
 session.add(Midwest)
 session.commit()
 # North Region
-North = Region(name = "North")
+North = Region(name = "North", image_region = "north.jpg")
 session.add(North)
 session.commit()
 # South Region
-South = Region(name = "South")
+South = Region(name = "South", image_region = "south.jpg")
 session.add(South)
 session.commit()
 # Williams

@@ -20,6 +20,8 @@ class Region(Base):
     name = Column(String(80), nullable = False)
     # each region has an id
     id = Column(Integer, primary_key = True)
+    # image_filename
+    image_region = Column(String(100))
 
 
 # class name will be in camel case
