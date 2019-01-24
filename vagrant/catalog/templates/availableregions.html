@@ -1,17 +1,64 @@
 <html>
 
 <head>
-  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
 </head>
-<body>
-  <h1>Organize 4 College</h1>
-  <h2>Begin Viewing Colleges by Region:</h2>
-  {% for region in regions %}
-  <div>
-    <a href='{{url_for('showRegionColleges', region=region.name)}}'>{{region.name}}</a>
-    </br>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
+  <div class="navbar-nav">
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
   </div>
-  {% endfor %}
-</body>
+
+</nav>
+
+
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <section class="jumbotron text-center bg-light">
+      <div class="container">
+        <h1 class="jumbotron-heading">Choose A Region</h1>
+        <p class="lead text-muted">
+          With <span class="font-italic">Organize 4 College</span>® adding, editing, and deleting information about colleges has never been easier!
+        </p>
+      </div>
+    </section>
+
+
+    <hr class="style15" style="margin-bottom: 30px;">
+
+
+    <div class="row">
+      {% for region in regions %}
+      <div class="col-sm-4">
+        <div>
+
+
+          <div class="card mb-4 box-shadow">
+            <!-- img -->
+            <img class="card-img-top rounded" src="{{url_for('static', filename=region.image_region)}}" alt="Image not found" height="200px" />
+
+            <div class="card-body">
+              <p class="card-text">{{region.name}}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <!-- linked region name  -->
+                  <a href='{{url_for('showRegionColleges', region=region.name)}}' class="btn btn-sm btn-outline-secondary">Learn More</a>
+                  <!-- json -->
+                  <a href='{{url_for('regionCollegeJson', region=region.name)}}' class="btn btn-sm btn-danger">JSON</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 
 </html>

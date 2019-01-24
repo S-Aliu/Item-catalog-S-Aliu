@@ -1,22 +1,51 @@
 <html>
 
 <head>
-  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
 </head>
-<body>
-  <a href='{{url_for('showRegions', region=region)}}'>Back</a>
-
-  <h1>Organize 4 College</h1>
-  <h2>Viewing Colleges in the Region of {{region}}</h2>
-  <a href='{{url_for('addNewCollege', region=region)}}'>Add College to this region</a>
-  </br>
-  {% for item in colleges %}
-
-  <div>
-    <a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>{{item.name}}</a></br>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
+  <div class="navbar-nav">
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
   </div>
 
-  {% endfor %}
-</body>
+</nav>
+
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <a href='{{url_for('addNewCollege', region=region)}}'>Add a college to this region</a></br>
+    <section class="jumbotron text-center bg-light">
+      <h1 class="jumbotron-heading">Organize 4 College</h1>
+      <p class="lead text-muted">{{region}}</p>
+    </section>
+    <hr class="style15" style="margin-bottom: 30px;">
+
+    <div class="row">
+      {% for item in colleges %}
+      <div class="col-sm-4">
+        <div class="card mb-4 box-shadow">
+          <!-- img -->
+          <img class="card-img-top rounded" src="{{url_for('static', filename=item.image_filename)}}" alt="Image not found" height="200px" />
+
+          <div class="card-body">
+            <p class="card-text">{{item.name}}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+                <!-- linked each college -->
+                <a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}' class="btn btn-sm btn-outline-secondary">More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
 
 </html>

@@ -1,42 +1,65 @@
 <html>
 
 <head>
-  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
 </head>
-<body>
-  <h1>Organize 4 College</h1>
-  <h2>Add A New College in the Region of {{region}}</h2>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
+  <div class="navbar-nav">
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
+  </div>
 
-  <form action="{{url_for('addNewCollege', region=region )}}" method = 'POST'  enctype="multipart/form-data">
+</nav>
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <section class="jumbotron text-center bg-light">
+      <h1 class="jumbotron-heading">Organize 4 College</h1>
+      <p class="lead text-muted"> Adding a new college to the {{region}}</p>
+    </section>
+    <hr class="style15" style="margin-bottom: 30px;">
 
-  <p>Name:</p>
-  <input type='text' size='55' name='college_name' required='required'></br>
+    <form action="{{url_for('addNewCollege', region=region )}}" method='POST' enctype="multipart/form-data">
 
+      <div class="form-group">
+        <label>Name:</label>
+        <input class="form-control" type='text' size='55' name='college_name' required='required'>
+      </div>
 
-  <p>Upload an Image:</p>
-  <input type="file" name="image">
+      <div class="form-group">
+        <label>Upload an Image:</label>
+        <input type="file" name="image">
+      </div>
 
+      <div class="form-group">
+        <label>Location:</label>
+        <input class="form-control" type='text' size='55' name='location'>
+      </div>
 
-  <p>Location:</p>
-  <input type='text' size='55' name='location'>
-  </br>
-  <p>Phone Number:</p>
-  <input type='text' size='55' name='phone_number'>
-  </br>
-  <p>Type of College:</p>
-  <input type='text' size='55' name='college_type'>
-  </br>
-  <p>Your Notes:</p>
-  <textarea name='client_notes' cols="90" rows="10"></textarea>
-  </br>
-  <input type="reset" value='Reset All'>
-  </br>
-  </br>
-  </br>
-  </br>
-  <input type='submit' value='Create'><span> | </span><a href='{{url_for('showRegionColleges', region=region)}}'>Cancel</a>
+      <div class="form-group">
+        <label>Phone Number:</label>
+        <input class="form-control" type='text' size='55' name='phone_number'>
+      </div>
 
-  </form>
-</body>
+      <div class="form-group">
+        <label>Type of College:</label>
+        <input class="form-control" type='text' size='55' name='college_type'>
+      </div>
+
+      <div class="form-group">
+        <label>Your Notes:</label>
+        <textarea class="form-control" name='client_notes' cols="90" rows="10"></textarea>
+      </div>
+      <input class="form-control" type="reset" value='Reset All'>
+      </br>
+
+      <!-- <input type='submit' value='Create'> -->
+      <button type="submit" class="btn btn-primary">Create</button><span> | </span><a href='{{url_for('showRegionColleges', region=region)}}'>Cancel</a>
+
+    </form>
+  </div>
+</div>
 
 </html>

@@ -1,38 +1,63 @@
 <html>
 
 <head>
-  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
 </head>
-<body>
-  <h1>Organize 4 College</h1>
-  <h2>Edit {{item.name}} </h2>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
+  <div class="navbar-nav">
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
+  </div>
 
-  <form action="#" method = 'POST'>
+</nav>
 
-  <p>Name:</p>
-  <input type='text' size='55' name='college_name' placeholder='{{item.name}}'></br>
-  <p>Location:</p>
-  <input type='text' size='55' name='location' placeholder='{{item.location}}'>
-</br>
-<p>Phone Number:</p>
-<input type='text' size='55' name='phone_number' placeholder='{{item.phone_number}}'>
-</br>
-<p>Type of College:</p>
-<input type='text' size='55' name='college_type' placeholder='{{item.college_type}}'>
-</br>
-<p>Your Notes:</p>
-<!-- <input type='text' size='300' name='client_notes' placeholder='{{item.notes}}'> -->
-<textarea name='client_notes' cols="90" rows="10"  placeholder='{{item.notes}}'></textarea>
-</br>
-<input type="reset" value='Reset All'>
-</br>
-</br>
-</br>
-</br>
-  <input type='submit' value='Edit'><span> | </span><a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>Cancel</a>
 
-  </form>
 
-</body>
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <section class="jumbotron text-center bg-light">
+      <h1 class="jumbotron-heading">Organize 4 College</h1>
+      <p class="lead text-muted">Editing {{item.name}}</p>
+    </section>
+    <hr class="style15" style="margin-bottom: 30px;">
+
+    <form action="{{url_for('editMyCollege', region=item.college_region.name, college_id=item.college_id)}}" method='POST'>
+      <div class="form-group">
+        <label>Name:</label>
+        <input class="form-control" type='text' size='55' name='college_name' placeholder='{{item.name}}'>
+      </div>
+
+      <div class="form-group">
+        <label>Location:</label>
+        <input class="form-control" type='text' size='55' name='location' placeholder='{{item.location}}'>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number:</label>
+        <input class="form-control" type='text' size='55' name='phone_number' placeholder='{{item.phone_number}}'>
+      </div>
+
+      <div class="form-group">
+        <label>Type of College:</label>
+        <input class="form-control" type='text' size='55' name='college_type' placeholder='{{item.college_type}}'>
+      </div>
+
+      <div class="form-group">
+        <label>Your Notes:</label>
+        <textarea name='client_notes' cols="90" rows="10" placeholder='{{item.notes}}' class="form-control"></textarea>
+      </div>
+
+      <input class="btn btn-outline-danger btn-lg btn-block" type="reset" value='Reset All'>
+      </br>
+      <!-- <input type='submit' value='Edit'> -->
+      <button type="submit" class="btn btn-primary">Edit</button><span> </span><a class="btn btn-secondary" href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}'>Cancel</a>
+
+    </form>
+  </div>
+</div>
+
 
 </html>

@@ -1,19 +1,49 @@
 <html>
 
 <head>
-  <link rel=stylesheet type=text/css href="{{url_for('static',filename='styles.css')}}"
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
 </head>
-<body>
-  <a href='{{url_for('showRegionColleges', colleges=colleges, region=region)}}'>Back</a>
-  <h1>Organize 4 College</h1>
-  <h2>{{college.name}}</h2>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
+  <div class="navbar-nav">
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
+  </div>
+</nav>
 
-  <div>
-    <img src="{{url_for('static',filename=image)}}" alt="college pic" height="170px">
-    <p> Address: {{college.location}}</br>Phone Number: {{college.phone_number}}</br>This is a {{college.college_type}}</br>Notes: {{college.notes}}</p>
-    <p><a href='{{url_for('editMyCollege', region=college.college_region.name, college_id=college.college_id)}}'>Edit</a> | <a href='{{url_for('deleteMyCollege', region=college.college_region.name, college_id=college.college_id)}}'>Delete</a></p>
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <section class="jumbotron text-center bg-light">
+      <h1 class="jumbotron-heading">Organize 4 College | {{college.name}}</h1>
+      <p class="lead text-muted"> Viewing {{college.name}} in the {{region}} region</p>
+    </section>
+    <hr class="style15" style="margin-bottom: 30px;">
+
+    <div class="row">
+      <div class="col-md-5 text-center">
+        <img src="{{url_for('static',filename=image)}}" alt="{{college.image_filename}}" style="min-width:450px;max-width:451px;" class="img-thumbnail">
+      </div>
+      <div class="col-md-7">
+        <ul class="list-group">
+          <li class="list-group-item">Address: {{college.location}}</li>
+          <li class="list-group-item">Phone Number: {{college.phone_number}}</li>
+          <li class="list-group-item">Type: {{college.college_type}}</li>
+          <li class="list-group-item">Your Notes: {{college.notes}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-5">
+      </div>
+      <div class="col-md-7">
+      </br>
+      <p><a class="btn btn-primary" href='{{url_for('editMyCollege', region=college.college_region.name, college_id=college.college_id)}}'>Edit</a> <a class="btn btn-danger" href='{{url_for('deleteMyCollege', region=college.college_region.name, college_id=college.college_id)}}'>Delete</a></p>
+    </div>
+  </div>
   </div>
 
-</body>
+
 
 </html>
