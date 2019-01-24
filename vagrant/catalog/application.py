@@ -1,4 +1,5 @@
 import os
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app, jsonify
 app = Flask(__name__)
 # downloaded pictures go to static folder
 UPLOAD_FOLDER = os.path.basename('static')
@@ -22,6 +23,16 @@ session = DBSession()
 def showRegions():
     regions = session.query(Region).all()
     return render_template('availableregions.html', regions=regions)
+
+
+# Making API Endpoint (Get Request)
+@app.route('/region/<region>/JSON/')
+def regionCollegeJson(region):
+    regions = session.query(Region).all()
+    region_info = session.query(Region).filter_by(name=region).one()
+    regioncolleges = session.query(College).filter_by(college_region_id=region_info.id)
+    return jsonify(RegionColleges=[i.serialize for i in regioncolleges])
+
 
 #show all colleges for region
 @app.route('/region/<region>/')

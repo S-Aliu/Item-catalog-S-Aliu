@@ -54,13 +54,13 @@ class College(Base):
         return {
         'name': self.name,
         'college_id': self.college_id,
-        'region': self.region,
+        'image_filename': self.image_filename,
         'location': self.location,
         'phone_number': self.phone_number,
         'college_type': self.college_type,
-        'notes': self.notes
+        'notes': self.notes,
+        'college_region_id': self.college_region_id,
         }
-
 
 #####################################################################   Insert At End Of File  #####################################################################
 
