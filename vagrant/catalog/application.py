@@ -50,6 +50,7 @@ def showRegionColleges(region):
 def addNewCollege(region):
     regions = session.query(Region).all()
     if request.method == 'POST':
+
         file = request.files['image']
         f= os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'], file.filename)
         file.save(f)
@@ -58,6 +59,7 @@ def addNewCollege(region):
         newCollege = College(name = request.form['college_name'], college_region=this_region, location = request.form['location'], phone_number = request.form['phone_number'], college_type = request.form['college_type'], notes = request.form['client_notes'], image_filename=file_n)
         session.add(newCollege)
         session.commit()
+        flash('Added '+str(newCollege.name)+' ('+str(newCollege.college_region.name+')'))
         return redirect(url_for('showRegionColleges', region=region, regions=regions))
     else:
         return render_template('addregionalcollege.html', region=region, regions=regions)
@@ -97,6 +99,7 @@ def editMyCollege(region, college_id):
             editedItem.notes = request.form['client_notes']
         session.add(editedItem)
         session.commit()
+        flash('Edited '+str(editedItem.name)+' ('+str(editedItem.college_region.name+')'))
         return redirect(url_for('showMyCollege', region=region, regions=regions, college_id=college_id))
     else:
         return render_template('editregionalcollege.html',region=region, regions=regions, college_id=college_id, item=editedItem)
@@ -109,6 +112,7 @@ def deleteMyCollege(region, college_id):
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
+        flash('Deleted '+str(itemToDelete.name)+' ('+str(itemToDelete.college_region.name+')'))
         return redirect(url_for('showRegionColleges', region=region, regions=regions))
     else:
         # if get request (including going to the website)
@@ -116,6 +120,6 @@ def deleteMyCollege(region, college_id):
 
 
 if __name__ == '__main__':
-    # app.secret_key = 'super_secret_key'
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
