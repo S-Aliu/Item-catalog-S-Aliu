@@ -2,6 +2,8 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles.css') }}">
+
 </head>
 <nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
   <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
@@ -29,31 +31,36 @@
 
     <hr class="style15" style="margin-bottom: 30px;">
 
-
     <div class="row">
-      {% for region in regions %}
-      <div class="col-sm-4">
-        <div>
 
+      <div class="col-sm-5">
+        <div class="row">
+          {% for region in regions %}
+          <div class="col-sm-12">
+            <div class="card mb-4 box-shadow">
+              <!-- img -->
+              <img class="card-img-top rounded" src="{{url_for('static', filename=region.image_region)}}" alt="Image not found" height="230px" />
 
-          <div class="card mb-4 box-shadow">
-            <!-- img -->
-            <img class="card-img-top rounded" src="{{url_for('static', filename=region.image_region)}}" alt="Image not found" height="200px" />
-
-            <div class="card-body">
-              <p class="card-text">{{region.name}}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <!-- linked region name  -->
-                  <a href='{{url_for('showRegionColleges', region=region.name)}}' class="btn btn-sm btn-outline-secondary">Learn More</a>
-                  <!-- json -->
-                  <a href='{{url_for('regionCollegeJson', region=region.name)}}' class="btn btn-sm btn-danger">JSON</a>
+              <div class="card-body">
+                <p class="card-text">{{region.name}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <!-- linked region name  -->
+                    <a href='{{url_for('showRegionColleges', region=region.name)}}' class="btn btn-sm btn-outline-secondary">Learn More</a>
+                    <!-- json -->
+                    <a href='{{url_for('regionCollegeJson', region=region.name)}}' class="btn btn-sm btn-danger">JSON</a>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          {% endfor %}
+        </div>
+      </div>
 
-
+      <div>
+        <image height="1460px" width="1.3px" src="{{url_for('static', filename='liner.png')}}">
+      </div>
       <div class="col-sm-5">
         <div class="row">
           <div class="col-sm-12">
@@ -68,7 +75,6 @@
           </div>
         </div>
       </div>
-      {% endfor %}
     </div>
   </div>
 </div>
