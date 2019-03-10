@@ -26,6 +26,7 @@
 </nav>
 
 
+
 <body>
   <div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
   <div class="container">
@@ -38,6 +39,62 @@
       </div>
     </section>
       <hr class="style15" style="margin-bottom: 30px;">
+      <!-- FACE BOOK SIGNIN SCRIPT -->
+      <script>
+      window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '893060907752291',
+        cookie     : true,  // enable cookies to allow the server to access
+                            // the session
+        xfbml      : true,  // parse social plugins on this page
+        version    : 'v3.2'
+      });
+      };
+      // Load the SDK asynchronously so rest of page can load w/o it
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+      // when facebook button clicked this function called
+      function sendTokenToServer() {
+        var access_token = FB.getAuthResponse()['accessToken'];
+        console.log(access_token)
+        console.log('Welcome!  Fetching your information.... ');
+        FB.api('/me', function(response) {
+          console.log('Successful login for: ' + response.name);
+         $.ajax({
+          type: 'POST',
+          url: '/fbconnect?state={{STATE}}',
+          processData: false,
+          data: access_token,
+          contentType:
+          'application/octet-stream; charset=utf-8',
+          success: function(result) {
+            // Handle or verify the server response if necessary.
+            if (result) {
+              $('#reslt').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+             setTimeout(function() {
+              window.location.href = "/region";
+             }, 4000);
+
+          } else {
+            $('#reslt').html('Failed to make a server-side call. Check your configuration and console.');
+             }
+          }
+
+      });
+        });
+      }
+
+
+    </script>
+      <!-- END FACEBOOK SIGN IN SCRIPT -->
+      <!-- GOOGLE PLUS SIGN IN SCRIPT-->
+
+
 <div class="row">
       <div class="col-sm-4">
         <div class="row"><div id="result"></div></div>
@@ -86,6 +143,31 @@
                  </script>
                  <!--END GOOGLE PLUS SIGN IN SCRIPT-->
                    <!-- <div class="row"><div style="margin-left:15px"><div><span id="signinButton" class="g-signin" data-scope="openid email profile" data-clientid="965977437418-uk64d9dk4gvdu1hsod0etp7jffln6mi5.apps.googleusercontent.com" data-redirecturi="postmessage" data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback" data-approvalprompt="force"></span></div></div></div> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="row"><div id="reslt"></div></div>
+        <div class="row">
+        <div class="card mb-4 box-shadow">
+          <!-- img -->
+          <img class="card-img-top rounded" src="{{url_for('static', filename='facebook.png')}}" alt="Image not found" height="230px" style="padding-left:20px;padding-right:20px;padding-top:10px;"/>
+          <div class="card-body">
+            <!-- title  -->
+            <p class="card-text">Login with Facebook</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+                <!-- login button --> <!-- use facebook SDK to create facebook login -->
+                <button><fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();"><!-- can write what want for face book button here --><a href='javascript:sendTokenToServer()'>Login with Facebook</a></fb:login-button></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       </div>
 </div>
 
