@@ -307,8 +307,11 @@ def getUserID(email):
 @app.route('/region/')
 def showRegions():
     regions = session.query(Region).all()
-    return render_template('availableregions.html', regions=regions)
-
+    if 'username' in login_session:
+        current_user_picture = login_session['picture']
+        return render_template('availableregions.html', regions=regions, pic=current_user_picture)
+    else:
+        return render_template('availableregions.html', regions=regions)
 
 # Making API Endpoint (Get Request)
 @app.route('/region/<region>/JSON/')
@@ -327,27 +330,32 @@ def showRegionColleges(region):
     region_info = session.query(Region).filter_by(name=region).one()
     # filter id
     regioncolleges = session.query(College).filter_by(college_region_id=region_info.id)
-    return render_template('regionalcolleges.html', colleges=regioncolleges, region=region, regions=regions)
+    if 'username' not in login_session:
+        return render_template('publicregionalcolleges.html', colleges=regioncolleges, region=region, regions=regions)
+    else:
+        current_user_picture = login_session['picture']
+        return render_template('regionalcolleges.html', colleges=regioncolleges, region=region, regions=regions, pic=current_user_picture)
 
 # create new college in same region by clicking link on page that shows all colleges for region
 @app.route('/region/<region>/new/', methods=['GET','POST'])
 # region is a string not an object!
 def addNewCollege(region):
     regions = session.query(Region).all()
+    else:
+        current_user_picture = login_session['picture']
     if request.method == 'POST':
-
         file = request.files['image']
         f= os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'], file.filename)
         file.save(f)
         file_n = file.filename
         this_region = session.query(Region).filter_by(name=region).one()
-        newCollege = College(name = request.form['college_name'], college_region=this_region, location = request.form['location'], phone_number = request.form['phone_number'], college_type = request.form['college_type'], notes = request.form['client_notes'], image_filename=file_n)
+        newCollege = College(name = request.form['college_name'], college_region=this_region, location = request.form['location'], phone_number = request.form['phone_number'], college_type = request.form['college_type'], notes = request.form['client_notes'], user_id=login_session['user_id'], image_filename=file_n)
         session.add(newCollege)
         session.commit()
         flash('Added '+str(newCollege.name)+' ('+str(newCollege.college_region.name+')'))
         return redirect(url_for('showRegionColleges', region=region, regions=regions))
     else:
-        return render_template('addregionalcollege.html', region=region, regions=regions)
+        return render_template('addregionalcollege.html', region=region, regions=regions, pic=current_user_picture)
 
 # show college by clicking link on page that shows all colleges for region
 @app.route('/region/<region>/<int:college_id>/')
@@ -356,10 +364,19 @@ def showMyCollege(region, college_id):
     regions = session.query(Region).all()
     region_info = session.query(Region).filter_by(name=region).one()
     regioncolleges = session.query(College).filter_by(college_region_id=region_info.id)
-
     # get college to view
     college = session.query(College).filter_by(college_id=college_id).one()
-    return render_template('mycollege.html', college=college, colleges=regioncolleges, region=region, regions=regions, image=college.image_filename)
+    # get creator
+    creator = getUserInfo(college.user_id)
+    if 'username' in login_session and login_session['user_id'] != creator.id:
+        current_user_picture = login_session['picture']
+        return render_template('publicmycollege.html', college=college, creator=creator, colleges=regioncolleges, region=region, regions=regions, image=college.image_filename, pic=current_user_picture)
+    else:
+        if 'username' in login_session and login_session['user_id'] == creator.id:
+            current_user_picture = login_session['picture']
+            return render_template('mycollege.html', college=college, creator=creator, colleges=regioncolleges, region=region, regions=regions, image=college.image_filename, pic=current_user_picture)
+        else:
+            return render_template('publicmycollege.html', college=college, creator=creator, colleges=regioncolleges, region=region, regions=regions, image=college.image_filename)
 
 # may go to another page to edit any of college info provided
 @app.route('/region/<region>/<int:college_id>/edit/', methods=['GET','POST'])
@@ -387,21 +404,25 @@ def editMyCollege(region, college_id):
         flash('Edited '+str(editedItem.name)+' ('+str(editedItem.college_region.name+')'))
         return redirect(url_for('showMyCollege', region=region, regions=regions, college_id=college_id))
     else:
-        return render_template('editregionalcollege.html',region=region, regions=regions, college_id=college_id, item=editedItem)
+        current_user_picture = login_session['picture']
+        return render_template('editregionalcollege.html',region=region, regions=regions, college_id=college_id, item=editedItem, pic=current_user_picture)
 
 # this page allows user to delete colleges
 @app.route('/region/<region>/<int:college_id>/delete/', methods=['GET','POST'])
 def deleteMyCollege(region, college_id):
     itemToDelete = session.query(College).filter_by(college_id=college_id).one()
     regions = session.query(Region).all()
+    if login_session['user_id'] != itemToDelete.user_id:
+        return render_template('publicdeletemycollege.html', region=region, item=itemToDelete, regions=regions)
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
         flash('Deleted '+str(itemToDelete.name)+' ('+str(itemToDelete.college_region.name+')'))
         return redirect(url_for('showRegionColleges', region=region, regions=regions))
     else:
+        current_user_picture = login_session['picture']
         # if get request (including going to the website)
-        return render_template('deletemycollege.html', region=region, item=itemToDelete, regions=regions)
+        return render_template('deletemycollege.html', region=region, item=itemToDelete, regions=regions, pic=current_user_picture)
 
 
 if __name__ == '__main__':

@@ -5,6 +5,9 @@
 </head>
 <nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
   <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto class="rounded border border-white"></a>
+  {% if 'username' in session %}
+  <a class="navbar-brand"><img src="{{pic}}" height="37" width=auto style="margin-left:-5px;" class="rounded border border-white"></a>
+  {% endif %}
   <div class="navbar-nav" style="position:relative;">
     {% if 'username' not in session %}
     <a  class="nav-item nav-link active" href='{{url_for('showLogin')}}'>Login<span class="sr-only">(current)</span></a>
