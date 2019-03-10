@@ -4,6 +4,7 @@ from flask import Flask, render_template, redirect, request, url_for, flash, jso
 from flask import session as login_session
 import random, string
 from furl import furl
+from database_setup import College, Region, Base, User
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 
@@ -22,13 +23,10 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.basename('static')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-
-from database_setup import College, Region, Base
-
 CLIENT_ID = json.loads( open('client_secrets.json','r').read())['web']['client_id']
 
 # Create session and connect to DB ##
-engine = create_engine('sqlite:///colleges.db?check_same_thread=False')
+engine = create_engine('sqlite:///collegeswithusers.db', connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -92,6 +90,7 @@ def github_connect():
     return output
     return redirect(url_for('showRegions'))
     # welcome user and redirect
+
 
 @app.route('/gconnect', methods=['GET','POST'])
 def gconnect():
@@ -277,6 +276,32 @@ def disconnect():
     else:
         flash("You were not logged in")
         return redirect(url_for('showRegions'))
+
+# user functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    # saves current user and gets user id
+    return user.id
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+
+
+# ____________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+
 #show all regions
 @app.route('/')
 @app.route('/region/')

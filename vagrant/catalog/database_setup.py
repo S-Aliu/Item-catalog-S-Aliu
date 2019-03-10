@@ -14,6 +14,16 @@ from sqlalchemy import create_engine
 # creates instance of imported class called base letting SQL know that our classes are special classes that correspond to tables in our database
 Base = declarative_base()
 
+
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    picture = Column(String(250), nullable=False)
+
+
 class Region(Base):
     __tablename__='region'
     # region name
@@ -47,6 +57,8 @@ class College(Base):
     college_region_id = Column(Integer, ForeignKey('region.id'))
     # get more info from corresponding region
     college_region = relationship(Region)
+    user_id = Column(Integer,ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -65,6 +77,6 @@ class College(Base):
 #####################################################################   Insert At End Of File  #####################################################################
 
 # create instance of create_engine class and pt to database we will use
-engine = create_engine('sqlite:///colleges.db')
+engine = create_engine('sqlite:///collegeswithusers.db')
 # adds classes we create as tables in our database
 Base.metadata.create_all(engine)
