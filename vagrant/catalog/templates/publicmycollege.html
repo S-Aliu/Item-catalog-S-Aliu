@@ -1,0 +1,53 @@
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
+</head>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto class="rounded border border-white"></a>
+  {% if 'username' in session %}
+  <a class="navbar-brand"><img src="{{pic}}" height="37" width=auto style="margin-left:-5px;" class="rounded border border-white"></a>
+  {% endif %}
+  <div class="navbar-nav" style="position:relative;">
+    {% if 'username' not in session %}
+    <a  class="nav-item nav-link active" href='{{url_for('showLogin')}}'>Login<span class="sr-only">(current)</span></a>
+    {% else %}
+    <a class="nav-item nav-link active" href='{{url_for('disconnect')}}'>Logout<span class="sr-only">(current)</span></a>
+    {% endif %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
+  </div>
+
+</nav>
+
+
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <p style="font-size:20px;">Added by <img style="height:40px;margin-right:3px;margin-bottom: 7px;" src="{{creator.picture}}"><span class="font-italic">{{creator.name}}</span></p>
+    <section class="jumbotron text-center bg-light">
+      <h1 class="jumbotron-heading">Organize 4 College | {{college.name}}</h1>
+      <p class="lead text-muted"> Viewing {{college.name}} in the {{region}} region</p>
+    </section>
+    <hr class="style15" style="margin-bottom: 30px;">
+
+    <div class="row">
+      <div class="col-md-5 text-center">
+        <img src="{{url_for('static',filename=image)}}" alt="{{college.image_filename}}" style="min-width:450px;max-width:451px;" class="img-thumbnail">
+      </div>
+      <div class="col-md-7">
+        <ul class="list-group">
+          <li class="list-group-item">Address: {{college.location}}</li>
+          <li class="list-group-item">Phone Number: {{college.phone_number}}</li>
+          <li class="list-group-item">Type: {{college.college_type}}</li>
+          <li class="list-group-item">Your Notes: {{college.notes}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+
+</html>

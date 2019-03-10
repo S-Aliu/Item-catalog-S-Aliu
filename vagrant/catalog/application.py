@@ -341,6 +341,8 @@ def showRegionColleges(region):
 # region is a string not an object!
 def addNewCollege(region):
     regions = session.query(Region).all()
+    if 'username' not in login_session:
+        return redirect('/login')
     else:
         current_user_picture = login_session['picture']
     if request.method == 'POST':
@@ -378,11 +380,14 @@ def showMyCollege(region, college_id):
         else:
             return render_template('publicmycollege.html', college=college, creator=creator, colleges=regioncolleges, region=region, regions=regions, image=college.image_filename)
 
+
 # may go to another page to edit any of college info provided
 @app.route('/region/<region>/<int:college_id>/edit/', methods=['GET','POST'])
 def editMyCollege(region, college_id):
     editedItem = session.query(College).filter_by(college_id=college_id).one()
     regions = session.query(Region).all()
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         # change college_name  phone_number college_type client_notes
         if request.form['college_name']:
@@ -412,6 +417,8 @@ def editMyCollege(region, college_id):
 def deleteMyCollege(region, college_id):
     itemToDelete = session.query(College).filter_by(college_id=college_id).one()
     regions = session.query(Region).all()
+    if 'username' not in login_session:
+        return redirect('/login')
     if login_session['user_id'] != itemToDelete.user_id:
         return render_template('publicdeletemycollege.html', region=region, item=itemToDelete, regions=regions)
     if request.method == 'POST':

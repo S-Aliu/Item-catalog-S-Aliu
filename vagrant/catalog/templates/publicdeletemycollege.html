@@ -1,0 +1,64 @@
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
+</head>
+<nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto class="rounded border border-white"></a>
+  {% if 'username' in session %}
+  <a class="navbar-brand"><img src="{{pic}}" height="37" width=auto style="margin-left:-5px;" class="rounded border border-white"></a>
+  {% endif %}
+  <div class="navbar-nav" style="position:relative;">
+    {% if 'username' not in session %}
+    <a  class="nav-item nav-link active" href='{{url_for('showLogin')}}'>Login<span class="sr-only">(current)</span></a>
+    {% else %}
+    <a class="nav-item nav-link active" href='{{url_for('disconnect')}}'>Logout<span class="sr-only">(current)</span></a>
+    {% endif %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
+    {% for x in regions %}
+    <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>
+    {% endfor %}
+  </div>
+
+</nav>
+
+
+<div style="margin-top: 100px;margin-left: 5px;margin-bottom:100px;">
+  <div class="container">
+    <section class="jumbotron text-center bg-light">
+      <h1 class="jumbotron-heading">Organize 4 College</h1>
+      <p class="lead text-muted">You are not authorized to delete {{item.name}}, create your own college item in order to delete it.</p>
+    </section>
+    <hr class="style15" style="margin-bottom: 30px;">
+
+    <div class="row">
+    <div class="col-sm-3"><p></p></div>
+    <div class="col-sm-6">
+      <div class="card mb-4 box-shadow">
+        <!-- img -->
+        <img class="card-img-top rounded" src="{{url_for('static', filename=item.image_filename)}}" alt="Image not found" height="300px" />
+
+        <div class="card-body">
+          <p class="card-text">{{item.name}}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+              <!-- delete -->
+              <form action="{{url_for('deleteMyCollege', region=region, college_id=item.college_id)}}" method='POST'>
+                <a href='{{url_for('showMyCollege', region=region, college_id=item.college_id)}}' class="btn btn-secondary">Cancel</a>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+  </div>
+</div>
+
+
+
+
+
+</html>
