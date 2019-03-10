@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, request, url_for, flash, jso
 # new imports
 from flask import session as login_session
 import random, string
+from furl import furl
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 
@@ -42,6 +43,56 @@ def showLogin():
     login_session['state'] = state
     regions = session.query(Region).all()
     return render_template('login.html',STATE=state, regions=regions)
+
+@app.route('/github_connect', methods=['GET','POST'])
+def github_connect():
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    code = request['code']
+    app_id = json.loads(open('github_client_secrets.json', 'r').read())['web']['app_id']
+    app_secret = json.loads(open('github_client_secrets.json', 'r').read())['web']['app_secret']
+    url = 'https://github.com/login/oauth/access_token'
+    payload = {
+        'client_id': app_id,
+        'client_secret': app_secret,
+        'code': request.args.get('code')
+    }
+    headers = {'Accept': 'application/json'}
+    r = requests.post(url, params=payload, headers=headers)
+    response = r.json()
+    # get access_token from response and store it in login_session
+    login_session['access_token'] = token
+    # Use access token to get user from github api
+    # This is done by sending a get request to 'https://api.github.com/user?access_token='
+    url = 'https://api.github.com/user?access_token=%s' % token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    data = json.loads(result)
+    # finish setting up login_session with info from the users
+    login_session['provider'] = 'github'
+    login_session['username'] = data["name"]
+    login_session['email'] = data["email"]
+    login_session['github_id'] = data["id"]
+    login_session['picture'] = data["avatar_url"]
+    # see if user exists in your database already
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['github_id'] = user_id
+    output = ''
+    output += '<h1>Welcome, '
+    output += login_session['username']
+    output += '!</h1>'
+    output += '<img src="'
+    output += login_session['picture']
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    flash("You are now logged in as %s" % login_session['username'])
+    return output
+    return redirect(url_for('showRegions'))
+    # welcome user and redirect
+
 @app.route('/gconnect', methods=['GET','POST'])
 def gconnect():
     # Validate state token

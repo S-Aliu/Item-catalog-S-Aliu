@@ -39,6 +39,40 @@
       </div>
     </section>
       <hr class="style15" style="margin-bottom: 30px;">
+
+      <script>
+      // GITHUB LOGIN
+      function signInCallbackgithub(authResult) {
+        if (authResult['code']) {
+          // Hide the sign-in button now that the user is authorized
+          $('#signinButtongithub').attr('style', 'display: none');
+          // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the
+            type: 'POST',
+            url: '/github_connect?state={{STATE}}',
+            processData: false,
+            data: authResult['code'],
+            contentType: 'application/octet-stream; charset=utf-8',
+            success: function(result) {
+              // Handle or verify the server response if necessary.
+              if (result) {
+                $('#result2').html('Login Successful!</br>' + result + '</br>Redirecting...')
+                setTimeout(function() {
+                  window.location.href = "/region";
+                }, 4000);
+
+              } else if (authResult['error']) {
+                console.log('There was an error: ' + authResult['error']);
+              } else {
+                $('#result2').html('Failed to make a server-side call. Check your configuration and console.');
+              }
+            }
+
+          });
+        }
+      }
+      // END OF GITHUB
+      </script>
+
       <!-- FACE BOOK SIGNIN SCRIPT -->
       <script>
       window.fbAsyncInit = function() {
@@ -168,6 +202,24 @@
         </div>
       </div>
     </div>
+      <div class="col-sm-4">
+        <div class="row"><div id="result2"></div></div>
+        <div class="row">
+        <div class="card mb-4 box-shadow">
+          <div id="result2"></div>
+          <!-- img -->
+          <img class="card-img-top rounded" src="{{url_for('static', filename='github.png')}}" alt="Image not found" height="230px" style="padding-left:20px;padding-right:20px;padding-top:10px;"/>
+          <div class="card-body">
+            <!-- title  -->
+            <p class="card-text">Login with GitHub</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+              <a href="https://github.com/login/oauth/authorize?client_id=12d77ff252a620774d4d&state={{STATE}}" id="signinButtongithub">Login with GitHub</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       </div>
 </div>
 
