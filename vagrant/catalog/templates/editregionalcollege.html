@@ -4,8 +4,13 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap.min.css') }}">
 </head>
 <nav class="navbar navbar-expand-md  fixed-top navbar-dark bg-dark">
-  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto style="margin-right:10px;" class="rounded border border-white"></a>
-  <div class="navbar-nav">
+  <a class="navbar-brand"><img src="{{url_for('static', filename='favicon.ico')}}" width="60" height=auto class="rounded border border-white"></a>
+  <div class="navbar-nav" style="position:relative;">
+    {% if 'username' not in session %}
+    <a  class="nav-item nav-link active" href='{{url_for('showLogin')}}'>Login<span class="sr-only">(current)</span></a>
+    {% else %}
+    <a class="nav-item nav-link active" href='{{url_for('disconnect')}}'>Logout<span class="sr-only">(current)</span></a>
+    {% endif %}
     <a class="nav-item nav-link active" href='{{url_for('showRegions', region=region)}}'>Home<span class="sr-only">(current)</span></a>
     {% for x in regions %}
     <a class="nav-item nav-link active" href='{{url_for('showRegionColleges', region=x.name)}}'>{{x.name}}<span class="sr-only">(current)</span></a>

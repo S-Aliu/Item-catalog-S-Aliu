@@ -1,5 +1,21 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app, jsonify
+from flask import Flask, render_template, redirect, request, url_for, flash, jsonify, send_from_directory, current_app, jsonify
+# new imports
+from flask import session as login_session
+import random, string
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+
+from oauth2client.client import flow_from_clientsecrets
+# use this method if run into error trying to exchance authorization token for access token and need to catch error
+from oauth2client.client import FlowExchangeError
+# http library in python
+import httplib2
+import json
+# converts the return value from function into reponse object we many send to client
+from flask import make_response
+import requests
+
 app = Flask(__name__)
 # downloaded pictures go to static folder
 UPLOAD_FOLDER = os.path.basename('static')
@@ -7,9 +23,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 from database_setup import College, Region, Base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
+CLIENT_ID = json.loads( open('client_secrets.json','r').read())['web']['client_id']
 
 # Create session and connect to DB ##
 engine = create_engine('sqlite:///colleges.db?check_same_thread=False')
@@ -17,6 +32,139 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
+
+# CHANGES FOR LOGIN
+@app.route('/login')
+def showLogin():
+    # gets random numbers and letters that would need to be guessed to forge request (anti forgery state tokend)
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    login_session['state'] = state
+    regions = session.query(Region).all()
+    return render_template('login.html',STATE=state, regions=regions)
+@app.route('/gconnect', methods=['GET','POST'])
+def gconnect():
+    # Validate state token
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # Obtain authorization code
+    code = request.data
+    try:
+        # Upgrade the authorization code into a credentials object
+        # takes flow object and adds client info
+        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        # specify this is one time code server will send
+        oauth_flow.redirect_uri = 'postmessage'
+        # passing one time code as input initiates the exchange
+        credentials = oauth_flow.step2_exchange(code)
+        # if anything goes wrong will send error as json object
+    except FlowExchangeError:
+        response = make_response(json.dumps('Failed to upgrade the authorization code.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # Check that the access token is valid.
+    access_token = credentials.access_token
+    # now that we have a credential object will check if valid access token by appending in order to have Google API verify
+    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
+    # two lines create get requests with url and access token and store as result
+    h = httplib2.Http()
+    result = json.loads(h.request(url, 'GET')[1])
+    # if the result has any errors then will send 500 error otherwise we have working access token
+    if result.get('error') is not None:
+        response = make_response(json.dumps(result.get('error')), 500)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    gplus_id = credentials.id_token['sub']
+    if result['user_id'] != gplus_id:
+        response = make_response(json.dumps("Token's user ID doesn't match given user ID."), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+        # checks if client ID's match
+    if result['issued_to'] != CLIENT_ID:
+        response = make_response(json.dumps("Token's client ID does not match app's."), 401)
+        print "Token's client ID does not match app's."
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # will check if user already logged in and set 200 succesful authentication without resetting log in variables
+    stored_access_token = login_session.get('access_token')
+    stored_gplus_id = login_session.get('gplus_id')
+    if stored_access_token is not None and gplus_id == stored_gplus_id:
+        response = make_response(json.dumps('Current user is already connected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # Store the access token in the session for later use.
+    login_session['access_token'] = credentials.access_token
+    login_session['gplus_id'] = gplus_id
+    # Get user info using the google API requesting info within scope and storing it as data
+    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    params = {'access_token': credentials.access_token, 'alt': 'json'}
+    answer = requests.get(userinfo_url, params=params)
+    data = json.loads(answer.text)
+    # stores data in login session
+    login_session['username'] = data["name"]
+    login_session['picture'] = data["picture"]
+    login_session['email'] = data["email"]
+    login_session['provider'] = 'google'
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+    output = ''
+    output += '<h1>Welcome, '
+    output += login_session['username']
+    output += '!</h1>'
+    output += '<img src="'
+    output += login_session['picture']
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    flash("You are now logged in as %s" % login_session['username'])
+    return output
+
+# revoke a current users login and reset their login session
+@app.route('/gdisconnect')
+def gdisconnect():
+    access_token = login_session.get('access_token')
+    # if credentials object is empty then no user to disconnect from and will send error message
+    if access_token is None:
+        response = make_response(json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    if result['status'] == '200':
+    # this will tell user if successfully disconnected
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else:
+        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+@app.route('/fbconnect', methods = ['POST','GET'])
+@app.route('/disconnect')
+def disconnect():
+    if 'provider' in login_session:
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['user_id']
+        if login_session['provider'] == 'google':
+            gdisconnect()
+            del login_session['gplus_id']
+            del login_session['access_token']
+        if login_session['provider'] == 'facebook':
+            fbdisconnect()
+            del login_session['provider']
+            del login_session['facebook_id']
+        del login_session['provider']
+        flash("You have successfully been logged out.")
+        return redirect(url_for('showRegions'))
+    else:
+        flash("You were not logged in")
+        return redirect(url_for('showRegions'))
 #show all regions
 @app.route('/')
 @app.route('/region/')
@@ -123,3 +271,4 @@ if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
+    app.run(host = '0.0.0.0', port = 8000)
